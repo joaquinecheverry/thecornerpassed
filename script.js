@@ -35,6 +35,7 @@ cartDrawer.style.paddingBottom = '80px';    // or whatever extra space you need
   
   
   // ---- Hover‑sound synth setup ----
+// ---- Click‑sound synth setup ----
   const synths = [
     new Tone.Synth({ oscillator: { type: "sine" }, envelope: { attack: 0.1, decay: 0.2, sustain: 0.3, release: 0.4 } }),
     new Tone.Synth({ oscillator: { type: "sine", modulationType: "triangle", modulation: 0.7 }, envelope: { attack: 1.2, decay: 1.3, sustain: 0.2, release: 0.5 } }),
@@ -42,14 +43,14 @@ cartDrawer.style.paddingBottom = '80px';    // or whatever extra space you need
     new Tone.Synth({ oscillator: { type: "sine", modulationType: "square", modulation: 1.2 }, envelope: { attack: 2.0, decay: 2.1, sustain: 0.2, release: 0.8 } })
   ].map(s => s.toDestination());
 
-  function playRandomHoverSynth() {
+  function playRandomClickSynth() {
     const s = synths[Math.floor(Math.random() * synths.length)];
     s.triggerAttackRelease("C5", 0.2);
   }
 
+  // Cursor hover effects (no sound)
   document.addEventListener('mouseover', e => {
     const el = e.target;
-    // if its computed cursor would be "pointer", override it
     if (window.getComputedStyle(el).cursor === 'pointer') {
       el.style.cursor = 'url("CURSORTCPYELLO.png"), auto';
     }
@@ -57,29 +58,28 @@ cartDrawer.style.paddingBottom = '80px';    // or whatever extra space you need
   
   document.addEventListener('mouseout', e => {
     const el = e.target;
-    // when leaving, reset back to black logo if we changed it
     if (el.style.cursor.includes('CURSORTCPYELLO.png')) {
       el.style.cursor = 'url("CURSORTCPB.png"), auto';
     }
   });
 
-  const extraHoverIDs = ['logodiv','imagediv'];
-  document.addEventListener('mouseover', e => {
+  // Play sound only on clicks for interactive elements
+  document.addEventListener('click', e => {
     const el = e.target;
     const isDynamic = el.tagName === 'P' && (el.closest('#colldiv') || el.closest('#typediv') || el.closest('#photodiv'));
-    const isExtra = extraHoverIDs.includes(el.id);
-    const visible = window.getComputedStyle(el).visibility !== 'hidden' && window.getComputedStyle(el).display !== 'none';
-    if ((isDynamic || isExtra) && visible) playRandomHoverSynth();
+    const isButton = el.tagName === 'BUTTON' || el.closest('button');
+    const isLogo = el.closest('#logodiv') || el.closest('#logodiv-mobile');
+    const isImage = el.tagName === 'IMG' && el.closest('#imagediv');
+    const isClickable = window.getComputedStyle(el).cursor.includes('pointer') || 
+                       window.getComputedStyle(el).cursor.includes('CURSOR');
+    
+    const visible = window.getComputedStyle(el).visibility !== 'hidden' && 
+                   window.getComputedStyle(el).display !== 'none';
+    
+    if ((isDynamic || isButton || isLogo || isImage || isClickable) && visible) {
+      playRandomClickSynth();
+    }
   });
-
-  // — Play synth whenever the cursor switches to your logo —
-document.addEventListener('mouseover', e => {
-  const cur = window.getComputedStyle(e.target).cursor;
-  // look for your custom-cursor URLs
-  if (cur.includes('CURSORTCPB.png') || cur.includes('CURSORTCPYELLO.png')) {
-    playRandomHoverSynth();
-  }
-});
 
   // ---- Data & gallery logic ----
   let currentCollection = "";
