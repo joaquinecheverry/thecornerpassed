@@ -359,58 +359,34 @@ window.addEventListener('resize', () => {
     return name;
   }
 
-  let logoClicked = false;
-// Add this to your existing logodiv click handler
-// Replace your existing logodiv.addEventListener('click', ...) with this:
+  let logoClicked = true; // Skip landing sequence
 
-logodiv.addEventListener('click', async () => {
-  // First time clicking (landing sequence)
-  if (!logoClicked) {
-    logoClicked = true;
-    logodiv.style.visibility = 'hidden';
-    await Tone.start();
-    const volume = new Tone.Volume(-60).toDestination();
-    const synth = new Tone.Synth({
-      oscillator: { type: "sine" },
-      envelope: { attack: 0.5, decay: 0.1, sustain: 0.8, release: 0.1 }
-    }).connect(volume);
-    volume.volume.linearRampToValueAtTime(1, Tone.now() + 2);
-    synth.triggerAttackRelease("E4", 2);
-    Tone.Transport.scheduleOnce(() => synth.triggerAttackRelease("C5", 0.1), "+2");
-    Tone.Transport.start();
+  // Make navigation visible immediately on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    colldiv.style.visibility = 'visible';
     
-    setTimeout(() => {
-      logodiv.classList.remove('centered');
-      logodiv.style.visibility = 'visible';
-      colldiv.style.visibility = 'visible';
-      
-      // Show mobile logo if on mobile
-      if (window.innerWidth <= 768) {
-        const mobileLogoDiv = document.getElementById('mobilelogo');
-        if (mobileLogoDiv) {
-          mobileLogoDiv.classList.add('show');f
-        }
+    // On mobile, ensure mobile logo is visible immediately
+    if (window.innerWidth <= 768) {
+      const mobileLogoDiv = document.getElementById('mobilelogo');
+      if (mobileLogoDiv) {
+        mobileLogoDiv.style.visibility = 'visible';
+        // Don't need .show class anymore since we set visibility directly
       }
-    }, 2000);
-  }
-  // Subsequent clicks (navigation reset)
-  else {
-    // Play a quick sound for feedback
-    playRandomHoverSynth();
-    
-    // Reset navigation to initial state (only colldiv visible)
-    resetToInitialNavigation();
-  }
+    }
+  });
+
+// Simplified logo click - just resets navigation
+logodiv.addEventListener('click', () => {
+  playRandomHoverSynth();
+  resetToInitialNavigation();
 });
 
 // Also add click functionality to the mobile logo
 const mobileLogoElement = document.getElementById('logo-mobile');
 if (mobileLogoElement) {
   mobileLogoElement.addEventListener('click', () => {
-    if (logoClicked) {
-      playRandomHoverSynth();
-      resetToInitialNavigation();
-    }
+    playRandomHoverSynth();
+    resetToInitialNavigation();
   });
 }
 
@@ -1121,3 +1097,4 @@ cartDrawer.appendChild(finalNote);
   }
   updateCartDrawer();
 };
+
