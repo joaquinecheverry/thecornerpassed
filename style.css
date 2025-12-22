@@ -99,7 +99,7 @@ a:visited {
 }
 
 
-#logodiv.centered {
+/* #logodiv.centered {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -107,7 +107,7 @@ a:visited {
   z-index: 1000;
 
 }
-
+*/
 
 
 #colldiv, #typediv, #photodiv {
@@ -117,7 +117,7 @@ a:visited {
   align-content: center;
   justify-content: center;
   text-align: left;
-  visibility: hidden;
+  visibility:visible;
 }
 
 p:hover {
@@ -527,7 +527,7 @@ body, html {
     width: 100vw;
     height: auto;
     position: static;
-    flex: 0 0 auto; /* Don't grow or shrink, natural size */
+    flex: 0 0 auto;
   }
 
   #topnav {
@@ -539,40 +539,42 @@ body, html {
     justify-content: flex-start;
   }
 
-  /* Logo positioning for mobile - FIXED: Only apply when NOT centered */
-  #logodiv:not(.centered) {
-    position: static;
-    transform: none;
-    flex: 0 0 auto;
-    padding: 10px;
-    text-align: left;
-    justify-content: left;
+  /* UPDATED: Hide the desktop logodiv completely on mobile */
+  #topnav #logodiv {
+    display: none !important;
   }
 
-  /* IMPORTANT: Preserve centered state on mobile */
-  #logodiv.centered {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    z-index: 1000 !important;
-    /* Override mobile styles when centered */
-    width: auto !important;
-    height: auto !important;
-    padding: 0 !important;
-    text-align: center !important;
+  /* Mobile logo row - centered and always visible */
+  #mobilelogo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    width: 100%;
+    visibility: visible !important; /* Always visible, no landing sequence */
   }
 
-  #logo {
-    width: 30px;
+  /* Remove the .show class requirement */
+  #mobilelogo.show {
+    visibility: visible;
   }
 
-  #logo:hover {
-    width: 35px;
+  #logodiv-mobile {
+    text-align: center;
   }
 
-  /* CRITICAL FIX: Navigation items should REMAIN HIDDEN initially on mobile 
-     The JavaScript will make them visible after logo click */
+  #logo-mobile {
+    width: 50px;
+    transition: width 0.3s ease;
+    cursor: url('CURSORTCPB.png'), auto;
+  }
+
+  #logo-mobile:hover {
+    width: 55px;
+    cursor: url('CURSORTCPYELLO.png'), auto;
+  }
+
+ 
   #colldiv, #typediv, #photodiv {
     /* DO NOT set visibility: visible here - let JS control it */
     padding: 3px;
@@ -971,5 +973,7 @@ mix-blend-mode: color-dodge;
     display: none;
   }
 }
+
+
 
 
